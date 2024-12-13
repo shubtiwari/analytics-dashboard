@@ -1,10 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { store } from './store/store';
-import { CssBaseline, ThemeProvider, createTheme, Box, Typography } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { Provider } from 'react-redux';
 import MainLayout from './components/layout/MainLayout';
 import Dashboard from './components/dashboard/Dashboard';
+import Summary from './components/dashboard/Summary';
+import Settlements from './components/dashboard/Settlements';
 
 const theme = createTheme({
   palette: {
@@ -29,6 +31,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<MainLayout user={user} />}>
           <Route path="dashboard" element={<Dashboard />} />
+              <Route path="summary" element={<Summary />} />
+              <Route path="settlements" element={<Settlements />} />
         </Route>
       </Routes>
     </Router>

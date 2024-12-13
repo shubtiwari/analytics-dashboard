@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Box, List, ListItem, ListItemText, Divider, Avatar, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, List, ListItem, ListItemText, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import JodoIcon from "../../assets/JodoLogo";
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import AbcIcon from '@mui/icons-material/Abc';
 
-const Sidebar = ({ user }) => {
+const Sidebar = () => {
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState('/dashboard');
 
   const menuItems = [
-    { text: 'Dashboard', path: '/dashboard' },
+    { text: 'Analytics', path: '/dashboard', Icon: QueryStatsIcon },
+    { text: 'Summary', path: '/summary', Icon: SummarizeIcon },
+    { text: 'Settlements', path: '/settlements', Icon: AbcIcon },
   ];
 
   const handleMenuClick = (path) => {
@@ -16,16 +22,24 @@ const Sidebar = ({ user }) => {
   };
 
   return (
-    <Box sx={{
-      width: 240,
-      backgroundColor: '#141414',
-      color: 'white',
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: 2,
-    }}>
-      <Box sx={{ marginBottom: 3 }}>
+    <Box
+      sx={{
+        width: 220,
+        backgroundColor: '#0F1778',
+        color: 'white',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 2,
+      }}
+    >
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <JodoIcon
+          sx={{
+            fontSize: 100,
+            color: '#FFC20E',
+          }}
+        />
       </Box>
       <List>
         {menuItems.map((item) => (
@@ -38,6 +52,9 @@ const Sidebar = ({ user }) => {
                 '&:hover': { color: 'red' },
               }}
             >
+              <Box sx={{ display: 'flex', alignItems: 'center', marginRight: 2 }}>
+                <item.Icon sx={{ color: activeItem === item.path ? 'red' : 'white' }} />
+              </Box>
               <ListItemText primary={item.text} />
             </ListItem>
             <Divider sx={{ backgroundColor: 'gray' }} />
