@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
@@ -6,6 +6,8 @@ import html2canvas from 'html2canvas';
 
 const Analytics = () => {
     const reportRef = useRef(); // Reference to the content for PDF
+    const [selectedInstitute, setSelectedInstitute] = useState('')
+    const [selectedYear, setSelectedYear] = useState(''); 
 
     const instituteOptions = [
         { id: 1, title: 'THDC-IHET' },
@@ -34,6 +36,16 @@ const Analytics = () => {
         pdf.save('report.pdf'); // Download PDF
     };
 
+    const handleInstituteSelect = (value) => {
+        setSelectedInstitute(value);
+        console.log('Selected Institute:', value);
+    };
+
+    const handleYearSelect = (value) => {
+        setSelectedYear(value);
+        console.log('Selected Institute:', value);
+    };
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%' }}>
             <Box
@@ -49,8 +61,9 @@ const Analytics = () => {
                     backgroundColor: 'white',
                 }}
             >
-                <AutoCompleteComponent label={'Select Institute'} options={instituteOptions} />
-                <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} />
+                <AutoCompleteComponent label={'Select Institute'} options={instituteOptions}
+                    onSelect={handleInstituteSelect} />
+                <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} onSelect={handleYearSelect} />
                 <Button variant="contained" color="primary" onClick={downloadReport}>
                     Download Report
                 </Button>
