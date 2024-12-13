@@ -48,12 +48,12 @@ const Sidebar = () => {
               button
               onClick={() => handleMenuClick(item.path)}
               sx={{
-                color: activeItem === item.path ? 'red' : 'white',
-                '&:hover': { color: 'red' },
+                color: activeItem === item.path ? '#FFC20E' : 'white',
+                '&:hover': { color: '#FFC20E' },
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', marginRight: 2 }}>
-                <item.Icon sx={{ color: activeItem === item.path ? 'red' : 'white' }} />
+                <item.Icon sx={{ color: activeItem === item.path ? '#FFC20E' : 'white' }} />
               </Box>
               <ListItemText primary={item.text} />
             </ListItem>
