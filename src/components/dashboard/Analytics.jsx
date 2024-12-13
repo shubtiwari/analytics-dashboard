@@ -3,10 +3,11 @@ import { Box, Typography, Button } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { styled } from '@mui/system';  // Import the styled function
+import { styled } from '@mui/system';
 import { formatToRupee } from "../helper/index"
+import BasicPie from '../Charts/PieChart';
+import BasicBarChart from '../Charts/BarChart';
 
-// Styled components using the styled function from MUI
 const Container = styled(Box)({
     display: 'flex',
     flexDirection: 'column',
@@ -33,33 +34,39 @@ const ReportBox = styled(Box)(({ theme }) => ({
     borderRadius: '8px',
     marginTop: theme.spacing(2),
     overflow: 'auto',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
     display: 'flex',
     flexDirection: 'row',
     gap: theme.spacing(2),
     justifyContent: 'space-between',
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#F9F9F9'
 }));
 
+// Enhanced Card styling with shadow and padding
 const Card = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
     borderRadius: '8px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)', // More pronounced shadow
     backgroundColor: 'white',
     minWidth: '23%',
-    height: '145px',
     textAlign: 'left',
+    transition: 'box-shadow 0.3s ease', // Smooth shadow transition
+    '&:hover': {
+        boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.15)', // Hover effect for deeper shadow
+    },
 }));
 
 const Title = styled(Typography)({
-    marginBottom: '20px',
+    marginBottom: '12px', // Reduced margin for better space management
     color: '#4A4A4A',
+    fontWeight: 'bold', // Bold title for emphasis
 });
 
 const Amount = styled(Typography)({
     color: '#5E5E5E',
+    fontSize: '1.5rem', // Slightly larger font for amounts
+    fontWeight: '600', // Emphasized amount value
 });
 
 const DownloadButton = styled(Button)(({ theme }) => ({
@@ -138,17 +145,31 @@ const Analytics = () => {
                     Download Report
                 </DownloadButton>
             </FilterBox>
+            <Box ref={reportRef} sx={{ backgroundColor: '#F9F9F9', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <ReportBox>
+                    {tabContent.map((item) => (
+                        <Card key={item.id}>
+                            <Title>{item.title}</Title>
+                            <Amount variant='h4'>
+                                ₹{formatToRupee(item.amount)}
+                            </Amount>
+                        </Card>
+                    ))}
+                </ReportBox>
+                <Box sx={{ display: "flex", justifyContent: "space-between", paddingRight: "15px", paddingLeft: "15px" }}>
+                    <Box sx={{ backgroundColor: 'white' }}>
+                        <BasicBarChart />
+                        <Box>
+                           10% Paid on time
+                        </Box>
+                    </Box>
+                    <Box sx={{ backgroundColor: 'white' }}>
+                        <BasicPie />
+                    </Box>
 
-            <ReportBox ref={reportRef}>
-                {tabContent.map((item) => (
-                    <Card key={item.id}>
-                        <Title>{item.title}</Title>
-                        <Amount variant='h4'>
-                            ₹{formatToRupee(item.amount)}
-                        </Amount>
-                    </Card>
-                ))}
-            </ReportBox>
+                </Box>
+
+            </Box>
         </Container>
     );
 };
