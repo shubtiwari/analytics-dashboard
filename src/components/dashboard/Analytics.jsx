@@ -158,12 +158,12 @@ const Analytics = () => {
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "6%" }}>
                     <Box>
-                        <BasicBarChart />
+                        <BasicBarChart width={700} height={400}/>
                     </Box>
                     <Box>
-                        <BasicPie />
+                        <BasicPie width={350} height={400} />
                     </Box>
-                    </Box>
+                </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", }}>
                     <Box className={classes.card} sx={{ width: '49%', position: 'relative' }}>
                         <Typography className={classes.title} variant='h6'>

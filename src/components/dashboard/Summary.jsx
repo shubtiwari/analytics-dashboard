@@ -6,6 +6,7 @@ import html2canvas from 'html2canvas';
 import { makeStyles } from '@mui/styles';
 import { DatePicker } from 'antd';
 import { formatToRupee } from "../helper/index";
+import BasicBarChart from '../Charts/BarChart';
 
 const { RangePicker } = DatePicker;
 
@@ -148,7 +149,7 @@ const Summary = () => {
                 <AutoCompleteComponent label={'Select Institute'} options={instituteOptions} onSelect={handleInstituteSelect} />
                 <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} onSelect={handleYearSelect} />
                 <AutoCompleteComponent label={'Select Grade'} options={gradeOptions} onSelect={handleGrade} />
-                <RangePicker onChange={handleDateRangeChange} />
+                <RangePicker onChange={handleDateRangeChange} style={{ height: '55px' }} />
                 <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
                     Download Report
                 </Button>
@@ -164,6 +165,21 @@ const Summary = () => {
                         </Box>
                     ))}
                 </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "6%" }}>
+                    <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
+                        <Typography variant="h6" sx={{ marginBottom: '8px' }}>
+                            Heading for First Graph
+                        </Typography>
+                        <BasicBarChart width={500} height={300} />
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
+                        <Typography variant="h6" sx={{ marginBottom: '8px' }}>
+                            Heading for Second Graph
+                        </Typography>
+                        <BasicBarChart width={500} height={300} />
+                    </Box>
+                </Box>
+
             </Box>
         </Box>
     );

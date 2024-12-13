@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PieChart } from '@mui/x-charts';
 
 
-export default function BasicPie() {
+export default function BasicPie({width, height}) {
     return (
         <PieChart
             series={[
@@ -14,8 +14,8 @@ export default function BasicPie() {
                     ],
                 },
             ]}
-            width={350}
-            height={400}
+            width={width}
+            height={height}
         />
     );
 }

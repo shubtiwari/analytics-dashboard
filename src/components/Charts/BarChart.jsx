@@ -13,11 +13,11 @@ const xLabels = [
     'Page G',
 ];
 
-export default function SimpleBarChart() {
+export default function SimpleBarChart({width, height}) {
     return (
         <BarChart
-            width={700}
-            height={400}
+            width={width}
+            height={height}
             series={[
                 { data: currentData, label: 'Current Data', id: 'currentDataId' },
                 { data: expectedDataId, label: 'Expected Data', id: 'expectedDataId' },
