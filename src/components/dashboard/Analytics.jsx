@@ -3,78 +3,79 @@ import { Box, Typography, Button } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { styled } from '@mui/system';
-import { formatToRupee } from "../helper/index"
+import { formatToRupee } from "../helper/index";
 import BasicPie from '../Charts/PieChart';
 import BasicBarChart from '../Charts/BarChart';
+import { makeStyles } from '@mui/styles';
+import LinearProgress from '@mui/material/LinearProgress';
 
-const Container = styled(Box)({
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '100%',
-});
 
-const FilterBox = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: theme.spacing(2),
-    marginRight: theme.spacing(2),
-    borderRadius: '8px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-    backgroundColor: 'white',
-}));
-
-const ReportBox = styled(Box)(({ theme }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(2),
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    marginTop: theme.spacing(2),
-    overflow: 'auto',
-    display: 'flex',
-    flexDirection: 'row',
-    gap: theme.spacing(2),
-    justifyContent: 'space-between',
-    backgroundColor: '#F9F9F9'
-}));
-
-// Enhanced Card styling with shadow and padding
-const Card = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-    borderRadius: '8px',
-    boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)', // More pronounced shadow
-    backgroundColor: 'white',
-    minWidth: '23%',
-    textAlign: 'left',
-    transition: 'box-shadow 0.3s ease', // Smooth shadow transition
-    '&:hover': {
-        boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.15)', // Hover effect for deeper shadow
+const useStyles = makeStyles(() => ({
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        width: '100%',
+        padding: 10,
+    },
+    filterBox: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 10,
+        marginRight: 2,
+        borderRadius: '8px',
+        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+        backgroundColor: 'white',
+        marginBottom: 9
+    },
+    reportBox: {
+        flexGrow: 1,
+        padding: 2,
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        marginTop: 2,
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 1,
+        justifyContent: 'space-between',
+        backgroundColor: '#F9F9F9',
+        marginBottom: 10,
+    },
+    card: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 25,
+        borderRadius: '8px',
+        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)', // More pronounced shadow
+        backgroundColor: 'white',
+        minWidth: '23%',
+        textAlign: 'left',
+        transition: 'box-shadow 0.3s ease', // Smooth shadow transition
+        '&:hover': {
+            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.15)', // Hover effect for deeper shadow
+        },
+    },
+    title: {
+        marginBottom: '12px', // Reduced margin for better space management
+        color: '#4A4A4A',
+        fontWeight: 'bold', // Bold title for emphasis
+    },
+    amount: {
+        color: '#5E5E5E',
+        fontSize: '1.5rem', // Slightly larger font for amounts
+        fontWeight: '600', // Emphasized amount value
+    },
+    downloadButton: {
+        marginTop: 2,
     },
 }));
 
-const Title = styled(Typography)({
-    marginBottom: '12px', // Reduced margin for better space management
-    color: '#4A4A4A',
-    fontWeight: 'bold', // Bold title for emphasis
-});
-
-const Amount = styled(Typography)({
-    color: '#5E5E5E',
-    fontSize: '1.5rem', // Slightly larger font for amounts
-    fontWeight: '600', // Emphasized amount value
-});
-
-const DownloadButton = styled(Button)(({ theme }) => ({
-    marginTop: theme.spacing(2),
-}));
-
 const Analytics = () => {
-    const reportRef = useRef(); // Reference to the content for PDF
+    const classes = useStyles(); // Access the styles
+    const reportRef = useRef();
     const [selectedInstitute, setSelectedInstitute] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('');
@@ -108,16 +109,14 @@ const Analytics = () => {
     ];
 
     const downloadReport = async () => {
-        const element = reportRef.current; // Target the content
-        const canvas = await html2canvas(element); // Convert content to canvas
-        const imgData = canvas.toDataURL('image/png'); // Get canvas as image
-
+        const element = reportRef.current;
+        const canvas = await html2canvas(element);
+        const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF();
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight); // Add image to PDF
-        pdf.save('report.pdf'); // Download PDF
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('report.pdf');
     };
 
     const handleInstituteSelect = (value) => {
@@ -136,41 +135,47 @@ const Analytics = () => {
     };
 
     return (
-        <Container>
-            <FilterBox>
+        <Box className={classes.container}>
+            <Box className={classes.filterBox}>
                 <AutoCompleteComponent label={'Select Institute'} options={instituteOptions} onSelect={handleInstituteSelect} />
                 <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} onSelect={handleYearSelect} />
                 <AutoCompleteComponent label={'Select Grade'} options={gradeOptions} onSelect={handleGrade} />
-                <DownloadButton variant="contained" color="primary" onClick={downloadReport}>
+                <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
                     Download Report
-                </DownloadButton>
-            </FilterBox>
+                </Button>
+            </Box>
             <Box ref={reportRef} sx={{ backgroundColor: '#F9F9F9', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <ReportBox>
+                <Box className={classes.reportBox}>
                     {tabContent.map((item) => (
-                        <Card key={item.id}>
-                            <Title>{item.title}</Title>
-                            <Amount variant='h4'>
+                        <Box className={classes.card} key={item.id}>
+                            <Typography className={classes.title}>{item.title}</Typography>
+                            <Typography className={classes.amount} variant='h4'>
                                 ₹{formatToRupee(item.amount)}
-                            </Amount>
-                        </Card>
-                    ))}
-                </ReportBox>
-                <Box sx={{ display: "flex", justifyContent: "space-between", paddingRight: "15px", paddingLeft: "15px" }}>
-                    <Box sx={{ backgroundColor: 'white' }}>
-                        <BasicBarChart />
-                        <Box>
-                           10% Paid on time
+                            </Typography>
                         </Box>
+                    ))}
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "6%" }}>
+                    <Box>
+                        <BasicBarChart />
                     </Box>
-                    <Box sx={{ backgroundColor: 'white' }}>
+                    <Box>
                         <BasicPie />
                     </Box>
-
+                    </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between", }}>
+                    <Box className={classes.card} sx={{ width: '49%' }}>
+                        <Typography className={classes.title} variant='h5'>
+                            % Paid on time
+                            <LinearProgress variant="determinate" value={9} sx={{marginTop:"10px"}}/>
+                        </Typography>
+                    </Box>
+                    <Box className={classes.card} sx={{ width: '49%' }}>sdhfsjdf</Box>
                 </Box>
-
             </Box>
-        </Container>
+
+
+        </Box>
     );
 };
 
