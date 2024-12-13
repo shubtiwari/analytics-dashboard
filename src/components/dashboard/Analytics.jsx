@@ -22,14 +22,14 @@ const useStyles = makeStyles(() => ({
     filterBox: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
         marginRight: 2,
         borderRadius: '8px',
         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
         backgroundColor: 'white',
-        marginBottom: 9
+        marginBottom: 9,
+        justifyContent: "space-between"
     },
     reportBox: {
         flexGrow: 1,
@@ -136,12 +136,17 @@ const Analytics = () => {
     return (
         <Box className={classes.container}>
             <Box className={classes.filterBox}>
+                <Box sx={{ display: "flex" }}>
                 <AutoCompleteComponent label={'Select Institute'} options={instituteOptions} onSelect={handleInstituteSelect} />
                 <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} onSelect={handleYearSelect} />
                 <AutoCompleteComponent label={'Select Grade'} options={gradeOptions} onSelect={handleGrade} />
+                </Box>
+                <Box >
+
                 <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
                     Download Report
                 </Button>
+                </Box>
             </Box>
             <Box ref={reportRef} sx={{ backgroundColor: '#F9F9F9', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <Box className={classes.reportBox}>

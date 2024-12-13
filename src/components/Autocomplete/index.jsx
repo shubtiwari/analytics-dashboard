@@ -18,6 +18,7 @@ const AutoCompleteComponent = ({ label, options, onSelect }) => {
         display: 'inline-block',
         minWidth: 200,
         maxWidth: '100%',
+        marginRight: "20px"
       }}
     >
       <Autocomplete
