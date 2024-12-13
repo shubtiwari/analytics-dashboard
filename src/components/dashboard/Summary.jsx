@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { makeStyles } from '@mui/styles';
 import { DatePicker } from 'antd';
+import { formatToRupee } from "../helper/index";
 
 const { RangePicker } = DatePicker;
 
@@ -26,7 +27,44 @@ const useStyles = makeStyles(() => ({
         borderRadius: '8px',
         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
         backgroundColor: 'white',
-        marginBottom: 9,
+        marginBottom: 9
+    },
+    reportBox: {
+        flexGrow: 1,
+        padding: 2,
+        borderRadius: '8px',
+        marginTop: 2,
+        display: 'flex',
+        flexWrap: 'wrap', // Enable wrapping
+        gap: '16px', // Space between cards
+        justifyContent: 'flex-start', // Align items to the start
+        backgroundColor: '#F9F9F9',
+        marginBottom: 10,
+    },
+    
+    card: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 25,
+        borderRadius: '8px',
+        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)', // More pronounced shadow
+        backgroundColor: 'white',
+        minWidth: '23%',
+        textAlign: 'left',
+        transition: 'box-shadow 0.3s ease', // Smooth shadow transition
+        '&:hover': {
+            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.15)', // Hover effect for deeper shadow
+        },
+    },
+    title: {
+        marginBottom: '12px', // Reduced margin for better space management
+        color: '#4A4A4A',
+        fontWeight: 'bold', // Bold title for emphasis
+    },
+    amount: {
+        color: '#5E5E5E',
+        fontSize: '1.5rem', // Slightly larger font for amounts
+        fontWeight: '600', // Emphasized amount value
     },
     downloadButton: {
         marginTop: 2,
@@ -82,6 +120,17 @@ const Summary = () => {
         console.log('Selected Date Range:', dates);
     };
 
+    const tabContent = [
+        { id: 1, title: 'Total fee collection', amount: "10500" },
+        { id: 2, title: 'Number of Students', amount: "105000000" },
+        { id: 3, title: 'Unpaid amount', amount: "5000" },
+        { id: 4, title: 'Pending', amount: "8000" },
+        { id: 1, title: 'Total fee collection', amount: "10500" },
+        { id: 2, title: 'Number of Students', amount: "105000000" },
+        { id: 3, title: 'Unpaid amount', amount: "5000" },
+        { id: 4, title: 'Pending', amount: "8000" },
+    ];
+
     const downloadReport = async () => {
         const element = reportRef.current;
         const canvas = await html2canvas(element);
@@ -105,7 +154,16 @@ const Summary = () => {
                 </Button>
             </Box>
             <Box ref={reportRef} sx={{ backgroundColor: '#F9F9F9', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                {/* The content to be converted to PDF */}
+                <Box className={classes.reportBox}>
+                    {tabContent.map((item) => (
+                        <Box className={classes.card} key={item.id}>
+                            <Typography className={classes.title}>{item.title}</Typography>
+                            <Typography className={classes.amount} variant='h4'>
+                                ₹{formatToRupee(item.amount)}
+                            </Typography>
+                        </Box>
+                    ))}
+                </Box>
             </Box>
         </Box>
     );
