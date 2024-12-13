@@ -17,19 +17,13 @@ const theme = createTheme({
 });
 
 const App = () => {
-  const user = {
-    name: 'John Doe',
-    avatar: 'https://www.example.com/avatar.jpg',
-    role: 'user'
-  };
-
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
     <Router>
       <Routes>
-        <Route path="/" element={<MainLayout user={user} />}>
+        <Route path="/" element={<MainLayout />}>
           <Route path="analytics" element={<Analytics />} />
               <Route path="collections" element={<Collections />} />
               <Route path="charges" element={<Charges />} />

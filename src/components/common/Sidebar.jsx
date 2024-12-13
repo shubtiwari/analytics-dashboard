@@ -5,8 +5,39 @@ import JodoIcon from "../../assets/JodoLogo";
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import { makeStyles } from '@mui/styles';
+
+const useStyles = makeStyles(() => ({
+  sidebar: {
+    minWidth: 200,
+    maxWidth: 200,
+    backgroundColor: '#0F1778',
+    color: 'white',
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    padding: 16,
+  },
+  logo: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  listItem: {
+    '&:hover': {
+      color: '#FFC20E',
+    },
+  },
+  activeItem: {
+    color: '#FFC20E',
+  },
+  divider: {
+    backgroundColor: 'gray',
+  },
+}));
 
 const Sidebar = () => {
+  const classes = useStyles();
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState('/analytics');
 
@@ -22,25 +53,9 @@ const Sidebar = () => {
   };
 
   return (
-    <Box
-      sx={{
-        minWidth: 200,
-        maxWidth: 200,
-        backgroundColor: '#0F1778',
-        color: 'white',
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: 2,
-      }}
-    >
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <JodoIcon
-          sx={{
-            fontSize: 100,
-            color: '#FFC20E',
-          }}
-        />
+    <Box className={classes.sidebar}>
+      <Box className={classes.logo}>
+        <JodoIcon sx={{ fontSize: 100, color: '#FFC20E' }} />
       </Box>
       <List>
         {menuItems.map((item) => (
@@ -48,17 +63,14 @@ const Sidebar = () => {
             <ListItem
               button
               onClick={() => handleMenuClick(item.path)}
-              sx={{
-                color: activeItem === item.path ? '#FFC20E' : 'white',
-                '&:hover': { color: '#FFC20E' },
-              }}
+              className={`${classes.listItem} ${activeItem === item.path ? classes.activeItem : ''}`}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', marginRight: 2 }}>
                 <item.Icon sx={{ color: activeItem === item.path ? '#FFC20E' : 'white' }} />
               </Box>
               <ListItemText primary={item.text} />
             </ListItem>
-            <Divider sx={{ backgroundColor: 'gray' }} />
+            <Divider className={classes.divider} />
           </React.Fragment>
         ))}
       </List>

@@ -13,14 +13,24 @@ const xLabels = [
     'Page G',
 ];
 
-export default function SimpleBarChart({width, height}) {
+export default function SimpleBarChart({ width, height }) {
     return (
         <BarChart
             width={width}
             height={height}
             series={[
-                { data: currentData, label: 'Current Data', id: 'currentDataId' },
-                { data: expectedDataId, label: 'Expected Data', id: 'expectedDataId' },
+                {
+                    data: currentData,
+                    label: 'Current Data',
+                    id: 'currentDataId',
+                    color: '#4CAF50', // Custom color for "Current Data"
+                },
+                {
+                    data: expectedDataId,
+                    label: 'Expected Data',
+                    id: 'expectedDataId',
+                    color: '#FFC107', // Custom color for "Expected Data"
+                },
             ]}
             xAxis={[{ data: xLabels, scaleType: 'band' }]}
         />
