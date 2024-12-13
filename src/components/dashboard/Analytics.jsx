@@ -8,7 +8,8 @@ import BasicPie from '../Charts/PieChart';
 import BasicBarChart from '../Charts/BarChart';
 import { makeStyles } from '@mui/styles';
 import LinearProgress from '@mui/material/LinearProgress';
-
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
 
 const useStyles = makeStyles(() => ({
     container: {
@@ -103,9 +104,9 @@ const Analytics = () => {
 
     const tabContent = [
         { id: 1, title: 'Total fee collection', amount: "10500" },
-        { id: 2, title: 'Paid amount', amount: "105000000" },
+        { id: 2, title: 'Number of Students', amount: "105000000" },
         { id: 3, title: 'Unpaid amount', amount: "5000" },
-        { id: 4, title: 'One-time full payment done', amount: "8000" },
+        { id: 4, title: 'Pending', amount: "8000" },
     ];
 
     const downloadReport = async () => {
@@ -164,17 +165,30 @@ const Analytics = () => {
                     </Box>
                     </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", }}>
-                    <Box className={classes.card} sx={{ width: '49%' }}>
-                        <Typography className={classes.title} variant='h5'>
+                    <Box className={classes.card} sx={{ width: '49%', position: 'relative' }}>
+                        <Typography className={classes.title} variant='h6'>
                             % Paid on time
-                            <LinearProgress variant="determinate" value={9} sx={{marginTop:"10px"}}/>
+                            <LinearProgress variant="determinate" value={9} sx={{ marginTop: "10px" }} />
                         </Typography>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                bottom: '0px',
+                                right: '10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginTop: "32px"
+                            }}
+                        >
+                            <Tooltip title="This indicates the percentage of payments made on time" arrow>
+                                <InfoIcon sx={{ fontSize: '20px', color: 'gray', cursor: 'pointer' }} />
+                            </Tooltip>
+                        </Box>
                     </Box>
-                    <Box className={classes.card} sx={{ width: '49%' }}>sdhfsjdf</Box>
+                    <Box className={classes.card} sx={{ width: '49%' }}>Check Pending list</Box>
                 </Box>
             </Box>
-
-
         </Box>
     );
 };
