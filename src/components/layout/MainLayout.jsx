@@ -7,7 +7,7 @@ const MainLayout = ({ user }) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <Sidebar user={user} />
-      <Box sx={{ flexGrow: 1, padding: 2, alignItems:"center", textAlign:"center", display:"flex", justifyContent:"center" }}>
+      <Box sx={{ flexGrow: 1, alignItems:"center", textAlign:"center", display:"flex", justifyContent:"center" }}>
         <Outlet />
       </Box>
     </Box>

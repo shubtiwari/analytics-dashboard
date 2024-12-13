@@ -8,10 +8,10 @@ import AbcIcon from '@mui/icons-material/Abc';
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const [activeItem, setActiveItem] = useState('/dashboard');
+  const [activeItem, setActiveItem] = useState('/analytics');
 
   const menuItems = [
-    { text: 'Analytics', path: '/dashboard', Icon: QueryStatsIcon },
+    { text: 'Analytics', path: '/analytics', Icon: QueryStatsIcon },
     { text: 'Summary', path: '/summary', Icon: SummarizeIcon },
     { text: 'Settlements', path: '/settlements', Icon: AbcIcon },
   ];
