@@ -34,14 +34,12 @@ const useStyles = makeStyles(() => ({
     reportBox: {
         flexGrow: 1,
         padding: 2,
-        backgroundColor: 'white',
         borderRadius: '8px',
         marginTop: 2,
-        overflow: 'auto',
         display: 'flex',
-        flexDirection: 'row',
-        gap: 1,
-        justifyContent: 'space-between',
+        flexWrap: 'wrap', // Enable wrapping
+        gap: '16px', // Space between cards
+        justifyContent: 'flex-start', // Align items to the start
         backgroundColor: '#F9F9F9',
         marginBottom: 10,
     },
@@ -156,11 +154,17 @@ const Analytics = () => {
                         </Box>
                     ))}
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "6%" }}>
-                    <Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "2.5%" }}>
+                    <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
+                        <Typography variant="h6" sx={{ marginBottom: '8px' }}>
+                            Heading for First Graph
+                        </Typography>
                         <BasicBarChart width={700} height={400}/>
                     </Box>
-                    <Box>
+                    <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
+                        <Typography variant="h6" sx={{ marginBottom: '8px' }}>
+                            Heading for Second Graph
+                        </Typography>
                         <BasicPie width={350} height={400} />
                     </Box>
                 </Box>

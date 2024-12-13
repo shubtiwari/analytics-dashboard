@@ -24,7 +24,8 @@ const Sidebar = () => {
   return (
     <Box
       sx={{
-        width: 220,
+        minWidth: 200,
+        maxWidth: 200,
         backgroundColor: '#0F1778',
         color: 'white',
         height: '100vh',

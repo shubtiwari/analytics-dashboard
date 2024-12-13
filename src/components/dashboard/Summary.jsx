@@ -149,7 +149,7 @@ const Summary = () => {
                 <AutoCompleteComponent label={'Select Institute'} options={instituteOptions} onSelect={handleInstituteSelect} />
                 <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} onSelect={handleYearSelect} />
                 <AutoCompleteComponent label={'Select Grade'} options={gradeOptions} onSelect={handleGrade} />
-                <RangePicker onChange={handleDateRangeChange} style={{ height: '55px' }} />
+                {/* <RangePicker onChange={handleDateRangeChange} style={{ height: '55px' }} /> */}
                 <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
                     Download Report
                 </Button>
