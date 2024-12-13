@@ -33,7 +33,6 @@ const Analytics = () => {
                     backgroundColor: 'white',
                 }}
             >
-
                 <AutoCompleteComponent label={"Select Institute"} options={instituteOptions} />
                 <AutoCompleteComponent label={"Select Annual Year"} options={annualYearOptions} />
             </Box>
