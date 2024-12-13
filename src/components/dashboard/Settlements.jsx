@@ -5,7 +5,7 @@ const Settlements = () => {
     return (
         <Box sx={{ display: 'flex' }}>
             <Box>
-                Settlements
+                Coming Soon.....
             </Box>
         </Box>
     );

@@ -3,8 +3,8 @@ import { Box, List, ListItem, ListItemText, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import JodoIcon from "../../assets/JodoLogo";
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
-import SummarizeIcon from '@mui/icons-material/Summarize';
-import AbcIcon from '@mui/icons-material/Abc';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -12,8 +12,8 @@ const Sidebar = () => {
 
   const menuItems = [
     { text: 'Analytics', path: '/analytics', Icon: QueryStatsIcon },
-    { text: 'Summary', path: '/summary', Icon: SummarizeIcon },
-    { text: 'Settlements', path: '/settlements', Icon: AbcIcon },
+    { text: 'Collections', path: '/collections', Icon: CurrencyRupeeIcon },
+    { text: 'Charges', path: '/charges', Icon: CreditCardIcon },
   ];
 
   const handleMenuClick = (path) => {

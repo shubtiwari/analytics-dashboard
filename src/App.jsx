@@ -5,8 +5,8 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { Provider } from 'react-redux';
 import MainLayout from './components/layout/MainLayout';
 import Analytics from './components/dashboard/Analytics';
-import Summary from './components/dashboard/Summary';
-import Settlements from './components/dashboard/Settlements';
+import Collections from './components/dashboard/Summary';
+import Charges from './components/dashboard/Settlements';
 
 const theme = createTheme({
   palette: {
@@ -31,8 +31,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<MainLayout user={user} />}>
           <Route path="analytics" element={<Analytics />} />
-              <Route path="summary" element={<Summary />} />
-              <Route path="settlements" element={<Settlements />} />
+              <Route path="collections" element={<Collections />} />
+              <Route path="charges" element={<Charges />} />
         </Route>
       </Routes>
     </Router>
