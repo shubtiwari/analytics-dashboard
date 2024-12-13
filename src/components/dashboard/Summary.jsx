@@ -1,16 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { formatToRupee } from "../helper/index";
-import BasicPie from '../Charts/PieChart';
-import BasicBarChart from '../Charts/BarChart';
 import { makeStyles } from '@mui/styles';
-import LinearProgress from '@mui/material/LinearProgress';
-import Tooltip from '@mui/material/Tooltip';
-import InfoIcon from '@mui/icons-material/Info';
+import { DatePicker } from 'antd';
 
+const { RangePicker } = DatePicker;
 
 const useStyles = makeStyles(() => ({
     container: {
@@ -30,45 +26,7 @@ const useStyles = makeStyles(() => ({
         borderRadius: '8px',
         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
         backgroundColor: 'white',
-        marginBottom: 9
-    },
-    reportBox: {
-        flexGrow: 1,
-        padding: 2,
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        marginTop: 2,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 1,
-        justifyContent: 'space-between',
-        backgroundColor: '#F9F9F9',
-        marginBottom: 10,
-    },
-    card: {
-        display: 'flex',
-        flexDirection: 'column',
-        padding: 25,
-        borderRadius: '8px',
-        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)', // More pronounced shadow
-        backgroundColor: 'white',
-        minWidth: '23%',
-        textAlign: 'left',
-        transition: 'box-shadow 0.3s ease', // Smooth shadow transition
-        '&:hover': {
-            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.15)', // Hover effect for deeper shadow
-        },
-    },
-    title: {
-        marginBottom: '12px', // Reduced margin for better space management
-        color: '#4A4A4A',
-        fontWeight: 'bold', // Bold title for emphasis
-    },
-    amount: {
-        color: '#5E5E5E',
-        fontSize: '1.5rem', // Slightly larger font for amounts
-        fontWeight: '600', // Emphasized amount value
+        marginBottom: 9,
     },
     downloadButton: {
         marginTop: 2,
@@ -76,11 +34,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Summary = () => {
-    const classes = useStyles(); // Access the styles
+    const classes = useStyles();
     const reportRef = useRef();
     const [selectedInstitute, setSelectedInstitute] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('');
+    const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
 
     const instituteOptions = [
         { id: 1, title: 'THDC-IHET' },
@@ -103,13 +62,6 @@ const Summary = () => {
         { id: 4, title: "4" },
     ];
 
-    const tabContent = [
-        { id: 1, title: 'Total fee collection', amount: "10500" },
-        { id: 2, title: 'Number of Students', amount: "105000000" },
-        { id: 3, title: 'Unpaid amount', amount: "5000" },
-        { id: 4, title: 'Pending', amount: "8000" },
-    ];
-
     const handleInstituteSelect = (value) => {
         setSelectedInstitute(value);
         console.log('Selected Institute:', value);
@@ -123,6 +75,11 @@ const Summary = () => {
     const handleGrade = (value) => {
         setSelectedGrade(value);
         console.log('Selected Grade:', value);
+    };
+
+    const handleDateRangeChange = (dates) => {
+        setSelectedDateRange(dates);
+        console.log('Selected Date Range:', dates);
     };
 
     const downloadReport = async () => {
@@ -142,11 +99,13 @@ const Summary = () => {
                 <AutoCompleteComponent label={'Select Institute'} options={instituteOptions} onSelect={handleInstituteSelect} />
                 <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} onSelect={handleYearSelect} />
                 <AutoCompleteComponent label={'Select Grade'} options={gradeOptions} onSelect={handleGrade} />
+                <RangePicker onChange={handleDateRangeChange} />
                 <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
                     Download Report
                 </Button>
             </Box>
             <Box ref={reportRef} sx={{ backgroundColor: '#F9F9F9', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                {/* The content to be converted to PDF */}
             </Box>
         </Box>
     );
