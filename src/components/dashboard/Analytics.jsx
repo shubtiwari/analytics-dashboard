@@ -282,7 +282,7 @@ const Analytics = () => {
                         </Typography>
                         <BasicBarChart width={700} height={400} data={data?.monthly_data}/>
                     </Box>
-                    <Box sx={{ textAlign: 'center' }}>
+                    <Box sx={{ textAlign: 'center', width:"36%" }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                                     % of TFC under JODO
                         </Typography>
@@ -293,17 +293,17 @@ const Analytics = () => {
                     <Box className={classes.card} sx={{ width: '49%', position: 'relative' }}>
                         <Typography className={classes.title} variant='h6'>
                                     {data.on_time_payment_percentage}% Paid on time
-                                    <LinearProgress variant="determinate" value={data.on_time_payment_percentage} sx={{ marginTop: "10px" }} />
+                                    <LinearProgress variant="determinate" value={data.on_time_payment_percentage} sx={{ marginTop: "10px", height:"10px"}} />
                         </Typography>
                         <Box
                             sx={{
                                 position: 'absolute',
-                                bottom: '0px',
+                                top: '0px',
                                 right: '10px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                marginTop: "32px"
+                                marginTop: "12px"
                             }}
                         >
                             <Tooltip title="This indicates the percentage of payments made on time" arrow>
@@ -314,7 +314,7 @@ const Analytics = () => {
                             <Box className={classes.card} sx={{ width: '49%' }}>
                                 {data.on_time_payment_percentage === 100 ?
                                     <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                                        Everything is on track!
+                                        All Payments are on track!
                                     </Alert>
                                     :
                                     <Box>

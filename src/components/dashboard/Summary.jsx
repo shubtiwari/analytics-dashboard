@@ -12,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 import axios from 'axios';
 import { DatePicker } from 'antd';
+import BarChart1 from "../Charts/BarChart1"
 
 const { RangePicker } = DatePicker;
 const useStyles = makeStyles(() => ({
@@ -283,37 +284,23 @@ const Analytics = () => {
                 <Box className={classes.reportBox}>
                             {data && (
                                 <>
-                                
                                     <Box className={classes.card}>
-                                        <Typography className={classes.title}>Total Payment Done</Typography>
-                                        <Typography className={classes.amount}>₹{formatToRupee(data.number_of_students)}</Typography>
+                                        <Typography className={classes.title}> Payment Received</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
                                     </Box>
                                     <Box className={classes.card}>
-                                        <Typography className={classes.title}>No of Student</Typography>
-
-                                        <Box display="flex" alignItems="center" mt={1}>
-                                            <Box sx={{ justifyContent: "space-between", display: "flex" }}>
-                                                <Typography variant="caption">Flex: 120</Typography> 
-                                            </Box>
-                                        </Box>
-                                        <Box display="flex" alignItems="center" mt={1}>
-                                            <Typography variant="caption">Cred: 75</Typography> 
-                                        </Box>
-
-                                        <Box display="flex" alignItems="center" mt={1}>
-                                            <Typography variant="caption">Pay: 42</Typography> 
-                                        </Box>
+                                        <Typography className={classes.title}>Number of Students</Typography>
+                                        <Typography className={classes.title}>{data.number_of_students}</Typography>
                                     </Box>
 
                                     <Box className={classes.card}>
                                         <Typography className={classes.title}>Settled Amount</Typography>
-                                        <Typography className={classes.amount}>₹{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data?.total_collected_amount - data?.unpaid_amount)}</Typography>
                                     </Box>
                                     <Box className={classes.card}>
                                         <Typography className={classes.title}>Settlement Due</Typography>
                                         <Typography className={classes.amount}>₹{formatToRupee(data.total_collected_amount)}</Typography>
                                     </Box>
-
                                 </>
                             )}
                 </Box>
@@ -323,7 +310,8 @@ const Analytics = () => {
                                     Products Split
                         </Typography>
                         {(data?.monthly_data) && (
-                                <BasicBarChart width={500} height={300} data={data?.monthly_data} />
+                            <BarChart1  width={600} height={300} data={data}/>
+                                // <BasicBarChart width={500} height={300} data={data?.monthly_data} />
                         )},
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
@@ -331,7 +319,7 @@ const Analytics = () => {
                                     {/* vertical Bargraph need to add */}
                                     Settlement Track
                         </Typography>
-                                {/* <BasicBarChart width={500} height={300} data={data?.monthly_data} /> */}
+                                <BasicBarChart width={500} height={300} data={data?.monthly_data} />
                     </Box>
                         </Box>
             </Box>
