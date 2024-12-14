@@ -76,7 +76,7 @@ const useStyles = makeStyles(() => ({
 const Analytics = () => {
     const classes = useStyles(); // Access the styles
     const reportRef = useRef();
-    const [selectedInstitute, setSelectedInstitute] = useState('THDC-IHET'); // Set default institute
+    const [selectedInstitute, setSelectedInstitute] = useState('BITS'); // Set default institute
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('');
     const [gradeOptions, setGradeOptions] = useState([]);
@@ -86,29 +86,23 @@ const Analytics = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Define the mapping for institutes and collector IDs
     const instituteToCollectorId = {
         'THDC': 1,
         'BITS': 2,
-       
     };
 
     const options = [
         {
             institute: 'BITS',
-            annualYear: ['2021-2022', '2022-2023', '2023-2024'],
+            annualYear: ['2023-2024'],
             grades: {
-                '2021-2022': ['grade1', 'grade2', 'grade3'],
-                '2022-2023': ['grade1', 'grade3'],
-                '2023-2024': ['grade1', 'grade2', 'grade3']
+                '2023-2024': ['grade2', 'grade3']
             }
         },
         {
             institute: 'THDC',
-            annualYear: ['2021-2022', '2022-2023', '2023-2024'],
+            annualYear: ['2023-2024'],
             grades: {
-                '2021-2022': ['grade1', 'grade2', 'grade3'],
-                '2022-2023': ['grade1', 'grade3'],
                 '2023-2024': ['grade1', 'grade2', 'grade3']
             }
         },
@@ -119,25 +113,54 @@ const Analytics = () => {
         const canvas = await html2canvas(element);
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF();
+
+        // Get the page dimensions
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width + 60;
+
+        // Define padding values
+        const horizontalPadding = 10;
+
+        // Add Header - "Summary Report for the dashboard"
+        const headerText = `Summary Report for the ${selectedInstitute} Institute`;
+        const headerPadding = 20;
+        pdf.setFontSize(16);
+        pdf.text(headerText, (pdfWidth - horizontalPadding * 2) / 2, headerPadding, { align: "center" });
+
+        // Add Applied Filters
+        const filtersText = [
+            `Academic Year: ${selectedYear}`,
+            `Grade: ${selectedGrade}`
+        ];
+        const filterPadding = headerPadding + 10; // Space between header and filters
+        pdf.setFontSize(12);
+        filtersText.forEach((line, index) => {
+            pdf.text(line, horizontalPadding, filterPadding + (index * 10));
+        });
+
+        // Add the image of the report content below the filters
+        pdf.addImage(imgData, 'PNG', horizontalPadding, filterPadding + 30, pdfWidth - 2 * horizontalPadding, pdfHeight - 90);  // Adjusting the position with horizontal padding
+
+        // Add Footer - "JODO" centered at the bottom
+        const footerText = "JODO";
+        const footerHeight = pdfHeight - 1;  // Position near the bottom
+        pdf.setFontSize(12);
+        pdf.text(footerText, (pdfWidth - horizontalPadding * 2) / 2 + horizontalPadding, footerHeight, { align: "center" });
+
+        // Save the PDF
         pdf.save('report.pdf');
     };
 
     const handleInstituteSelect = (value) => {
         setSelectedInstitute(value);
-        console.log('Selected Institute:', value);
     };
 
     const handleYearSelect = (value) => {
         setSelectedYear(value);
-        console.log('Selected Year:', value);
     };
 
     const handleGrade = (value) => {
         setSelectedGrade(value);
-        console.log('Selected Grade:', value);
     };
 
     useEffect(() => {
@@ -166,6 +189,9 @@ const Analytics = () => {
 
     }, [selectedInstitute, selectedGrade, selectedYear]);
 
+    const scalePercentage = (percentage) => {
+        console.log("🚀 ~ scalePercentage ~ percentage:", percentage)
+    };
 
 
     useEffect(() => {
@@ -173,7 +199,6 @@ const Analytics = () => {
             const selectedData = options.find(
                 (option) => option.institute === selectedInstitute
             );
-
             if (selectedData) {
                 setAnnualYearOptions(selectedData.annualYear);
                 setSelectedGrade('');
@@ -256,13 +281,13 @@ const Analytics = () => {
                 <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "2.5%" }}>
                     <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-                            Heading for First Graph
+                                    Expected Amount V/S Collected Amount
                         </Typography>
                         <BasicBarChart width={700} height={400} data={data?.monthly_data}/>
                     </Box>
                     <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-                            Heading for Second Graph
+                                    Payment Method
                         </Typography>
                         <BasicPie width={350} height={400} data={data?.product_wise_collected_amount}/>
                     </Box>
@@ -270,8 +295,8 @@ const Analytics = () => {
                 <Box sx={{ display: "flex", justifyContent: "space-between", }}>
                     <Box className={classes.card} sx={{ width: '49%', position: 'relative' }}>
                         <Typography className={classes.title} variant='h6'>
-                            % Paid on time
-                            <LinearProgress variant="determinate" value={9} sx={{ marginTop: "10px" }} />
+                                    {data.on_time_payment_percentage}% Paid on time
+                                    <LinearProgress variant="determinate" value={data.on_time_payment_percentage} sx={{ marginTop: "10px" }} />
                         </Typography>
                         <Box
                             sx={{
