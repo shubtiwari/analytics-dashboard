@@ -304,7 +304,7 @@ const Analytics = () => {
                                 </>
                             )}
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "6%" }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "6%", height:"90%" }}>
                     <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                                     Products Split
