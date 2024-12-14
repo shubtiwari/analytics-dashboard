@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -76,7 +76,7 @@ const useStyles = makeStyles(() => ({
 const Analytics = () => {
     const classes = useStyles(); // Access the styles
     const reportRef = useRef();
-    const [selectedInstitute, setSelectedInstitute] = useState('');
+    const [selectedInstitute, setSelectedInstitute] = useState('THDC-IHET'); // Set default institute
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('');
     const [gradeOptions, setGradeOptions] = useState([]);
@@ -86,54 +86,32 @@ const Analytics = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // Define the mapping for institutes and collector IDs
+    const instituteToCollectorId = {
+        'THDC': 1,
+        'BITS': 2,
+       
+    };
 
     const options = [
         {
-            institute: 'THDC-IHET',
-            annualYear: ['2021-2022', '2022-2023', '2022-2024'],
+            institute: 'BITS',
+            annualYear: ['2021-2022', '2022-2023', '2023-2024'],
             grades: {
-                '2021-2022': ['1', '2', '3', '4'],
-                '2022-2023': ['5', '6', '7', '8'],
-                '2022-2024': ['1', '2', '3', '4']
+                '2021-2022': ['grade1', 'grade2', 'grade3'],
+                '2022-2023': ['grade1', 'grade3'],
+                '2023-2024': ['grade1', 'grade2', 'grade3']
             }
         },
         {
-            institute: 'IIT Kanpur',
-            annualYear: ['2022-2023'],
+            institute: 'THDC',
+            annualYear: ['2021-2022', '2022-2023', '2023-2024'],
             grades: {
-                '2022-2023': ['1', '2', '3', '4']
+                '2021-2022': ['grade1', 'grade2', 'grade3'],
+                '2022-2023': ['grade1', 'grade3'],
+                '2023-2024': ['grade1', 'grade2', 'grade3']
             }
         },
-        {
-            institute: 'IIT Bombay',
-            annualYear: ['2023-2024'],
-            grades: {
-                '2023-2024': ['1', '2', '3', '4']
-            }
-        },
-        {
-            institute: 'IIT Delhi',
-            annualYear: ['2024-2025'],
-            grades: {
-                '2024-2025': ['1', '2', '3', '4']
-            }
-        }
-    ];
-
-    const instituteOptions = [
-        { id: 1, title: 'THDC-IHET' },
-        { id: 2, title: 'IIT Kanpur' },
-        { id: 3, title: 'IIT Bombay' },
-        { id: 4, title: 'IIT Delhi' },
-    ];
-
-
-
-    const tabContent = [
-        { id: 1, title: 'Total fee collection', amount: "10500" },
-        { id: 2, title: 'Number of Students', amount: "105000000" },
-        { id: 3, title: 'Unpaid amount', amount: "5000" },
-        { id: 4, title: 'Pending', amount: "8000" },
     ];
 
     const downloadReport = async () => {
@@ -164,14 +142,16 @@ const Analytics = () => {
 
     useEffect(() => {
         const fetchAnalyticsData = async () => {
+            const collectorId = instituteToCollectorId[selectedInstitute] || 1;
             try {
                 const response = await axios.get('http://127.0.0.1:8000/analytics', {
                     params: {
-                        collector_id: 5,
-                        grade_id: 'grade3'
+                        collector_id: collectorId,
+                        academic_year: selectedYear,
+                        grade_id: selectedGrade,
                     }
                 });
-                setData(response.data);  // Assuming response.data contains the data
+                setData(response.data); 
                 setLoading(false);
             } catch (err) {
                 setError('Error fetching data');
@@ -179,19 +159,23 @@ const Analytics = () => {
             }
         };
 
-        fetchAnalyticsData();
-    }, []);
+
+        if (selectedInstitute) {
+            fetchAnalyticsData();
+        }
+
+    }, [selectedInstitute, selectedGrade, selectedYear]);
+
+
 
     useEffect(() => {
         if (selectedInstitute) {
-            // Find the relevant data for the selected institute
             const selectedData = options.find(
                 (option) => option.institute === selectedInstitute
             );
 
             if (selectedData) {
                 setAnnualYearOptions(selectedData.annualYear);
-                // Reset grade selection when institute or year changes
                 setSelectedGrade('');
                 setSelectedYear('');
             }
@@ -200,7 +184,6 @@ const Analytics = () => {
 
     useEffect(() => {
         if (selectedInstitute && selectedYear) {
-            // Find the relevant grades for the selected institute and year
             const selectedData = options.find(
                 (option) => option.institute === selectedInstitute
             );
@@ -210,7 +193,6 @@ const Analytics = () => {
             }
         }
     }, [selectedInstitute, selectedYear]);
-
 
     return (
         <Box className={classes.container}>
@@ -227,46 +209,62 @@ const Analytics = () => {
                         options={annualYearOptions}
                         value={selectedYear}
                         onSelect={handleYearSelect}
-                        disabled={!selectedInstitute} // Disable Year if Institute is not selected
+                        disabled={!selectedInstitute}
                     />
                     <AutoCompleteComponent
                         label={'Select Grade'}
                         options={gradeOptions}
                         value={selectedGrade}
                         onSelect={handleGrade}
-                        disabled={!selectedYear} // Disable Grade if Year is not selected
+                        disabled={!selectedYear}
                     />
                 </Box>
                 <Box >
-
-                <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
-                    Download Report
-                </Button>
+                    <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
+                        Download Report
+                    </Button>
                 </Box>
             </Box>
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                    <CircularProgress />
+                </Box>
+            ) : (
             <Box ref={reportRef} sx={{ backgroundColor: '#F9F9F9', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <Box className={classes.reportBox}>
-                    {tabContent.map((item) => (
-                        <Box className={classes.card} key={item.id}>
-                            <Typography className={classes.title}>{item.title}</Typography>
-                            <Typography className={classes.amount} variant='h4'>
-                                ₹{formatToRupee(item.amount)}
-                            </Typography>
+                    {data && (
+                        <>
+                            <Box className={classes.card}>
+                                <Typography className={classes.title}>Number of Students</Typography>
+                                <Typography className={classes.amount}>{formatToRupee(data.number_of_students)}</Typography>
+                            </Box>
+                            <Box className={classes.card}>
+                                <Typography className={classes.title}>Total fee collection</Typography>
+                                <Typography className={classes.amount}>{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
+                            </Box>
+                            <Box className={classes.card}>
+                                <Typography className={classes.title}>Paid amount</Typography>
+                                <Typography className={classes.amount}>{formatToRupee(data.total_collected_amount)}</Typography>
+                            </Box>
+                            <Box className={classes.card}>
+                                <Typography className={classes.title}>Unpaid amount</Typography>
+                                <Typography className={classes.amount}>{formatToRupee(data.unpaid_amount)}</Typography>
                         </Box>
-                    ))}
+                        </>
+                    )}
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "2.5%" }}>
                     <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                             Heading for First Graph
                         </Typography>
-                        <BasicBarChart width={700} height={400}/>
+                        <BasicBarChart width={700} height={400} data={data?.monthly_data}/>
                     </Box>
                     <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                             Heading for Second Graph
                         </Typography>
-                        <BasicPie width={350} height={400} />
+                        <BasicPie width={350} height={400} data={data?.product_wise_collected_amount}/>
                     </Box>
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", }}>
@@ -294,6 +292,7 @@ const Analytics = () => {
                     <Box className={classes.card} sx={{ width: '49%' }}>Check Pending list</Box>
                 </Box>
             </Box>
+            )}
         </Box>
     );
 };
