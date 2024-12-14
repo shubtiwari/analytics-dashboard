@@ -41,7 +41,7 @@ const useStyles = makeStyles(() => ({
         marginTop: 2,
         display: 'flex',
         flexWrap: 'wrap', // Enable wrapping
-        gap: '16px', // Space between cards
+        gap: '32px', // Space between cards
         justifyContent: 'flex-start', // Align items to the start
         backgroundColor: '#F9F9F9',
         marginBottom: 10,
@@ -83,6 +83,8 @@ const Analytics = () => {
     const [selectedGrade, setSelectedGrade] = useState('');
     const [gradeOptions, setGradeOptions] = useState([]);
     const [annualYearOptions, setAnnualYearOptions] = useState([]);
+    const [selectedDateRange, setSelectedDateRange] = useState()
+    console.log("🚀 ~ Analytics ~ selectedDateRange:", selectedDateRange)
 
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
@@ -165,7 +167,6 @@ const Analytics = () => {
         setSelectedGrade(value);
     };
 
-
     const handleDateRangeChange = (dates) => {
         setSelectedDateRange(dates);
         console.log('Selected Date Range:', dates);
@@ -180,6 +181,7 @@ const Analytics = () => {
                         collector_id: collectorId,
                         academic_year: selectedYear,
                         grade_id: selectedGrade,
+                        date_range: selectedDateRange
                     }
                 });
                 setData(response.data);
@@ -193,7 +195,10 @@ const Analytics = () => {
             fetchAnalyticsData();
         }
 
-    }, [selectedInstitute, selectedGrade, selectedYear]);
+    }, [selectedInstitute, selectedGrade, selectedYear, selectedDateRange]);
+
+    
+    
 
     useEffect(() => {
         if (selectedInstitute) {
@@ -262,50 +267,50 @@ const Analytics = () => {
                             {data && (
                                 <>
                                     <Box className={classes.card}>
-                                        <Typography className={classes.title}>Number of Students</Typography>
-                                        <Typography className={classes.amount}>{data.number_of_students}</Typography>
-                                    </Box>
-                                    <Box className={classes.card}>
-                                        <Typography className={classes.title}>Total fee collection</Typography>
-                                        <Typography className={classes.amount}>₹{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
-                                    </Box>
-                                    <Box className={classes.card}>
-                                        <Typography className={classes.title}>Paid amount</Typography>
-                                        <Typography className={classes.amount}>₹{formatToRupee(data.total_collected_amount)}</Typography>
-                                    </Box>
-                                    <Box className={classes.card}>
-                                        <Typography className={classes.title}>Unpaid amount</Typography>
-                                        <Typography className={classes.amount}>₹{formatToRupee(data.unpaid_amount)}</Typography>
-                                    </Box>
-                                    <Box className={classes.card}>
-                                        <Typography className={classes.title}>Number of Students</Typography>
+                                        <Typography className={classes.title}>Total Payment Done</Typography>
                                         <Typography className={classes.amount}>₹{formatToRupee(data.number_of_students)}</Typography>
                                     </Box>
                                     <Box className={classes.card}>
-                                        <Typography className={classes.title}>Total fee collection</Typography>
+                                        <Typography className={classes.title}>No of Student</Typography>
+
+                                        <Box display="flex" alignItems="center" mt={1}>
+                                            <Box sx={{ justifyContent: "space-between", display: "flex" }}>
+                                                <Typography variant="caption">Flex: 120</Typography> {/* Example number */}
+                                            </Box>
+                                        </Box>
+                                        <Box display="flex" alignItems="center" mt={1}>
+                                            <Typography variant="caption">Cred: 75</Typography> {/* Example number */}
+                                        </Box>
+
+                                        <Box display="flex" alignItems="center" mt={1}>
+                                            <Typography variant="caption">Pay: 42</Typography> {/* Example number */}
+                                        </Box>
+                                    </Box>
+
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Settled Amount</Typography>
                                         <Typography className={classes.amount}>₹{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
                                     </Box>
                                     <Box className={classes.card}>
-                                        <Typography className={classes.title}>Paid amount</Typography>
+                                        <Typography className={classes.title}>Settlement Due</Typography>
                                         <Typography className={classes.amount}>₹{formatToRupee(data.total_collected_amount)}</Typography>
                                     </Box>
-                                    <Box className={classes.card}>
-                                        <Typography className={classes.title}>Unpaid amount</Typography>
-                                        <Typography className={classes.amount}>₹{formatToRupee(data.unpaid_amount)}</Typography>
-                        </Box>
+
                                 </>
                             )}
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "6%" }}>
                     <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-                            Heading for First Graph
+                                    Products Split
                         </Typography>
+                                {/* Bargraph need to add */}
                                 <BasicBarChart width={500} height={300} data={data?.monthly_data} />
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-                            Heading for Second Graph
+                                    {/* vertical Bargraph need to add */}
+                                    Settlement Track
                         </Typography>
                                 <BasicBarChart width={500} height={300} data={data?.monthly_data} />
                     </Box>

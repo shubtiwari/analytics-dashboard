@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Box, Typography, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, CircularProgress, Link } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -11,6 +11,8 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 import axios from 'axios';
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
 
 const useStyles = makeStyles(() => ({
     container: {
@@ -39,7 +41,7 @@ const useStyles = makeStyles(() => ({
         marginTop: 2,
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '16px',
+        gap: '32px',
         justifyContent: 'flex-start',
         backgroundColor: '#F9F9F9',
         marginBottom: 10,
@@ -122,7 +124,7 @@ const Analytics = () => {
         const horizontalPadding = 10;
 
         // Add Header - "Summary Report for the dashboard"
-        const headerText = `Summary Report for the ${selectedInstitute} Institute`;
+        const headerText = `Analytics report for the ${selectedInstitute} Institute`;
         const headerPadding = 20;
         pdf.setFontSize(16);
         pdf.text(headerText, (pdfWidth - horizontalPadding * 2) / 2, headerPadding, { align: "center" });
@@ -225,7 +227,7 @@ const Analytics = () => {
                         onSelect={handleInstituteSelect}
                     />
                     <AutoCompleteComponent
-                        label={'Select Annual Year'}
+                        label={'Select Academic Year'}
                         options={annualYearOptions}
                         value={selectedYear}
                         onSelect={handleYearSelect}
@@ -260,29 +262,29 @@ const Analytics = () => {
                             </Box>
                             <Box className={classes.card}>
                                 <Typography className={classes.title}>Total fee collection</Typography>
-                                <Typography className={classes.amount}>{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
                             </Box>
                             <Box className={classes.card}>
                                 <Typography className={classes.title}>Paid amount</Typography>
-                                <Typography className={classes.amount}>{formatToRupee(data.total_collected_amount)}</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data.total_collected_amount)}</Typography>
                             </Box>
                             <Box className={classes.card}>
                                 <Typography className={classes.title}>Unpaid amount</Typography>
-                                <Typography className={classes.amount}>{formatToRupee(data.unpaid_amount)}</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data.unpaid_amount)}</Typography>
                         </Box>
                         </>
                     )}
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "2.5%" }}>
-                    <Box sx={{ textAlign: 'center' }}>
+                            <Box sx={{ textAlign: 'center', paddingRight: "5px" }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-                                    Expected Amount V/S Collected Amount
+                                    Monthly Cashflow
                         </Typography>
                         <BasicBarChart width={700} height={400} data={data?.monthly_data}/>
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-                                    Payment Method
+                                    % of TFC under JODO
                         </Typography>
                         <BasicPie width={350} height={400} data={data?.product_wise_collected_amount}/>
                     </Box>
@@ -309,7 +311,26 @@ const Analytics = () => {
                             </Tooltip>
                         </Box>
                     </Box>
-                    <Box className={classes.card} sx={{ width: '49%' }}>Check Pending list</Box>
+                            <Box className={classes.card} sx={{ width: '49%' }}>
+                                {data.on_time_payment_percentage === 100 ?
+                                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+                                        Everything is on track!
+                                    </Alert>
+                                    :
+                                    <Box>
+                                        <Alert severity="error" style={{ display: 'flex', alignItems: 'center' }}>
+                                            Delayed Payments
+                                            <Box component="span" ml={1}>
+                                                Check Flex -{' '}
+                                                <Link href="https://dashboard.jodo.in/" underline="hover" target="_blank" rel="noopener">
+                                                    CashFlow
+                                                </Link>
+                                            </Box>
+                                        </Alert>
+                                    </Box>
+                                }
+
+                            </Box>
                 </Box>
             </Box>
             )}
