@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
@@ -10,6 +10,7 @@ import { makeStyles } from '@mui/styles';
 import LinearProgress from '@mui/material/LinearProgress';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import axios from 'axios';
 
 const useStyles = makeStyles(() => ({
     container: {
@@ -78,6 +79,46 @@ const Analytics = () => {
     const [selectedInstitute, setSelectedInstitute] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('');
+    const [gradeOptions, setGradeOptions] = useState([]);
+    const [annualYearOptions, setAnnualYearOptions] = useState([]);
+
+    const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+
+    const options = [
+        {
+            institute: 'THDC-IHET',
+            annualYear: ['2021-2022', '2022-2023', '2022-2024'],
+            grades: {
+                '2021-2022': ['1', '2', '3', '4'],
+                '2022-2023': ['5', '6', '7', '8'],
+                '2022-2024': ['1', '2', '3', '4']
+            }
+        },
+        {
+            institute: 'IIT Kanpur',
+            annualYear: ['2022-2023'],
+            grades: {
+                '2022-2023': ['1', '2', '3', '4']
+            }
+        },
+        {
+            institute: 'IIT Bombay',
+            annualYear: ['2023-2024'],
+            grades: {
+                '2023-2024': ['1', '2', '3', '4']
+            }
+        },
+        {
+            institute: 'IIT Delhi',
+            annualYear: ['2024-2025'],
+            grades: {
+                '2024-2025': ['1', '2', '3', '4']
+            }
+        }
+    ];
 
     const instituteOptions = [
         { id: 1, title: 'THDC-IHET' },
@@ -86,19 +127,7 @@ const Analytics = () => {
         { id: 4, title: 'IIT Delhi' },
     ];
 
-    const annualYearOptions = [
-        { id: 1, title: '2021-2022' },
-        { id: 2, title: '2022-2023' },
-        { id: 3, title: '2023-2024' },
-        { id: 4, title: '2024-2025' },
-    ];
 
-    const gradeOptions = [
-        { id: 1, title: "1" },
-        { id: 2, title: "2" },
-        { id: 3, title: "3" },
-        { id: 4, title: "4" },
-    ];
 
     const tabContent = [
         { id: 1, title: 'Total fee collection', amount: "10500" },
@@ -133,13 +162,80 @@ const Analytics = () => {
         console.log('Selected Grade:', value);
     };
 
+    useEffect(() => {
+        const fetchAnalyticsData = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/analytics', {
+                    params: {
+                        collector_id: 5,
+                        grade_id: 'grade3'
+                    }
+                });
+                setData(response.data);  // Assuming response.data contains the data
+                setLoading(false);
+            } catch (err) {
+                setError('Error fetching data');
+                setLoading(false);
+            }
+        };
+
+        fetchAnalyticsData();
+    }, []);
+
+    useEffect(() => {
+        if (selectedInstitute) {
+            // Find the relevant data for the selected institute
+            const selectedData = options.find(
+                (option) => option.institute === selectedInstitute
+            );
+
+            if (selectedData) {
+                setAnnualYearOptions(selectedData.annualYear);
+                // Reset grade selection when institute or year changes
+                setSelectedGrade('');
+                setSelectedYear('');
+            }
+        }
+    }, [selectedInstitute]);
+
+    useEffect(() => {
+        if (selectedInstitute && selectedYear) {
+            // Find the relevant grades for the selected institute and year
+            const selectedData = options.find(
+                (option) => option.institute === selectedInstitute
+            );
+
+            if (selectedData) {
+                setGradeOptions(selectedData.grades[selectedYear] || []);
+            }
+        }
+    }, [selectedInstitute, selectedYear]);
+
+
     return (
         <Box className={classes.container}>
             <Box className={classes.filterBox}>
                 <Box sx={{ display: "flex" }}>
-                <AutoCompleteComponent label={'Select Institute'} options={instituteOptions} onSelect={handleInstituteSelect} />
-                <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} onSelect={handleYearSelect} />
-                <AutoCompleteComponent label={'Select Grade'} options={gradeOptions} onSelect={handleGrade} />
+                    <AutoCompleteComponent
+                        label={'Select Institute'}
+                        options={options.map((option) => option.institute)}
+                        value={selectedInstitute}
+                        onSelect={handleInstituteSelect}
+                    />
+                    <AutoCompleteComponent
+                        label={'Select Annual Year'}
+                        options={annualYearOptions}
+                        value={selectedYear}
+                        onSelect={handleYearSelect}
+                        disabled={!selectedInstitute} // Disable Year if Institute is not selected
+                    />
+                    <AutoCompleteComponent
+                        label={'Select Grade'}
+                        options={gradeOptions}
+                        value={selectedGrade}
+                        onSelect={handleGrade}
+                        disabled={!selectedYear} // Disable Grade if Year is not selected
+                    />
                 </Box>
                 <Box >
 
