@@ -38,9 +38,9 @@ const useStyles = makeStyles(() => ({
         borderRadius: '8px',
         marginTop: 2,
         display: 'flex',
-        flexWrap: 'wrap', // Enable wrapping
-        gap: '16px', // Space between cards
-        justifyContent: 'flex-start', // Align items to the start
+        flexWrap: 'wrap',
+        gap: '16px',
+        justifyContent: 'flex-start',
         backgroundColor: '#F9F9F9',
         marginBottom: 10,
     },
@@ -49,24 +49,24 @@ const useStyles = makeStyles(() => ({
         flexDirection: 'column',
         padding: 25,
         borderRadius: '8px',
-        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)', // More pronounced shadow
+        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
         backgroundColor: 'white',
         minWidth: '23%',
         textAlign: 'left',
-        transition: 'box-shadow 0.3s ease', // Smooth shadow transition
+        transition: 'box-shadow 0.3s ease',
         '&:hover': {
-            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.15)', // Hover effect for deeper shadow
+            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.15)',
         },
     },
     title: {
-        marginBottom: '12px', // Reduced margin for better space management
+        marginBottom: '12px',
         color: '#4A4A4A',
-        fontWeight: 'bold', // Bold title for emphasis
+        fontWeight: 'bold',
     },
     amount: {
         color: '#5E5E5E',
-        fontSize: '1.5rem', // Slightly larger font for amounts
-        fontWeight: '600', // Emphasized amount value
+        fontSize: '1.5rem',
+        fontWeight: '600',
     },
     downloadButton: {
         marginTop: 2,
@@ -74,9 +74,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Analytics = () => {
-    const classes = useStyles(); // Access the styles
+    const classes = useStyles();
     const reportRef = useRef();
-    const [selectedInstitute, setSelectedInstitute] = useState('BITS'); // Set default institute
+    const [selectedInstitute, setSelectedInstitute] = useState('BITS');
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('');
     const [gradeOptions, setGradeOptions] = useState([]);
@@ -188,11 +188,6 @@ const Analytics = () => {
         }
 
     }, [selectedInstitute, selectedGrade, selectedYear]);
-
-    const scalePercentage = (percentage) => {
-        console.log("🚀 ~ scalePercentage ~ percentage:", percentage)
-    };
-
 
     useEffect(() => {
         if (selectedInstitute) {
