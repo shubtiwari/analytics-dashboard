@@ -261,7 +261,7 @@ const Analytics = () => {
                         <>
                             <Box className={classes.card}>
                                 <Typography className={classes.title}>Number of Students</Typography>
-                                <Typography className={classes.amount}>{formatToRupee(data.number_of_students)}</Typography>
+                                <Typography className={classes.amount}>{data.number_of_students}</Typography>
                             </Box>
                             <Box className={classes.card}>
                                 <Typography className={classes.title}>Total fee collection</Typography>
@@ -279,13 +279,13 @@ const Analytics = () => {
                     )}
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "2.5%" }}>
-                    <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
+                    <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                                     Expected Amount V/S Collected Amount
                         </Typography>
                         <BasicBarChart width={700} height={400} data={data?.monthly_data}/>
                     </Box>
-                    <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
+                    <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                                     Payment Method
                         </Typography>

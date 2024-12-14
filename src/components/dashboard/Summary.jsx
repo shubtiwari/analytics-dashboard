@@ -1,15 +1,19 @@
-import React, { useRef, useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import React, { useRef, useState, useEffect } from 'react';
+import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import AutoCompleteComponent from '../Autocomplete/index';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { makeStyles } from '@mui/styles';
-import { DatePicker } from 'antd';
 import { formatToRupee } from "../helper/index";
+import BasicPie from '../Charts/PieChart';
 import BasicBarChart from '../Charts/BarChart';
+import { makeStyles } from '@mui/styles';
+import LinearProgress from '@mui/material/LinearProgress';
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
+import axios from 'axios';
+import { DatePicker } from 'antd';
 
 const { RangePicker } = DatePicker;
-
 const useStyles = makeStyles(() => ({
     container: {
         display: 'flex',
@@ -42,7 +46,6 @@ const useStyles = makeStyles(() => ({
         backgroundColor: '#F9F9F9',
         marginBottom: 10,
     },
-    
     card: {
         display: 'flex',
         flexDirection: 'column',
@@ -72,64 +75,39 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const Summary = () => {
-    const classes = useStyles();
+const Analytics = () => {
+    const classes = useStyles(); // Access the styles
     const reportRef = useRef();
-    const [selectedInstitute, setSelectedInstitute] = useState('');
+    const [selectedInstitute, setSelectedInstitute] = useState('BITS'); // Set default institute
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedGrade, setSelectedGrade] = useState('');
-    const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+    const [gradeOptions, setGradeOptions] = useState([]);
+    const [annualYearOptions, setAnnualYearOptions] = useState([]);
 
-    const instituteOptions = [
-        { id: 1, title: 'THDC-IHET' },
-        { id: 2, title: 'IIT Kanpur' },
-        { id: 3, title: 'IIT Bombay' },
-        { id: 4, title: 'IIT Delhi' },
-    ];
+    const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const annualYearOptions = [
-        { id: 1, title: '2021-2022' },
-        { id: 2, title: '2022-2023' },
-        { id: 3, title: '2023-2024' },
-        { id: 4, title: '2024-2025' },
-    ];
-
-    const gradeOptions = [
-        { id: 1, title: "1" },
-        { id: 2, title: "2" },
-        { id: 3, title: "3" },
-        { id: 4, title: "4" },
-    ];
-
-    const handleInstituteSelect = (value) => {
-        setSelectedInstitute(value);
-        console.log('Selected Institute:', value);
+    const instituteToCollectorId = {
+        'THDC': 1,
+        'BITS': 2,
     };
 
-    const handleYearSelect = (value) => {
-        setSelectedYear(value);
-        console.log('Selected Year:', value);
-    };
-
-    const handleGrade = (value) => {
-        setSelectedGrade(value);
-        console.log('Selected Grade:', value);
-    };
-
-    const handleDateRangeChange = (dates) => {
-        setSelectedDateRange(dates);
-        console.log('Selected Date Range:', dates);
-    };
-
-    const tabContent = [
-        { id: 1, title: 'Total fee collection', amount: "10500" },
-        { id: 2, title: 'Number of Students', amount: "105000000" },
-        { id: 3, title: 'Unpaid amount', amount: "5000" },
-        { id: 4, title: 'Pending', amount: "8000" },
-        { id: 1, title: 'Total fee collection', amount: "10500" },
-        { id: 2, title: 'Number of Students', amount: "105000000" },
-        { id: 3, title: 'Unpaid amount', amount: "5000" },
-        { id: 4, title: 'Pending', amount: "8000" },
+    const options = [
+        {
+            institute: 'BITS',
+            annualYear: ['2023-2024'],
+            grades: {
+                '2023-2024': ['grade2', 'grade3']
+            }
+        },
+        {
+            institute: 'THDC',
+            annualYear: ['2023-2024'],
+            grades: {
+                '2023-2024': ['grade1', 'grade2', 'grade3']
+            }
+        },
     ];
 
     const downloadReport = async () => {
@@ -137,56 +115,205 @@ const Summary = () => {
         const canvas = await html2canvas(element);
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF();
+
+        // Get the page dimensions
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width + 60;
+
+        // Define padding values
+        const horizontalPadding = 10;
+
+        // Add Header - "Summary Report for the dashboard"
+        const headerText = `Summary Report for the ${selectedInstitute} Institute`;
+        const headerPadding = 20;
+        pdf.setFontSize(16);
+        pdf.text(headerText, (pdfWidth - horizontalPadding * 2) / 2, headerPadding, { align: "center" });
+
+        // Add Applied Filters
+        const filtersText = [
+            `Academic Year: ${selectedYear}`,
+            `Grade: ${selectedGrade}`
+        ];
+        const filterPadding = headerPadding + 10; // Space between header and filters
+        pdf.setFontSize(12);
+        filtersText.forEach((line, index) => {
+            pdf.text(line, horizontalPadding, filterPadding + (index * 10));
+        });
+
+        // Add the image of the report content below the filters
+        pdf.addImage(imgData, 'PNG', horizontalPadding, filterPadding + 30, pdfWidth - 2 * horizontalPadding, pdfHeight - 90);  // Adjusting the position with horizontal padding
+
+        // Add Footer - "JODO" centered at the bottom
+        const footerText = "JODO";
+        const footerHeight = pdfHeight - 1;  // Position near the bottom
+        pdf.setFontSize(12);
+        pdf.text(footerText, (pdfWidth - horizontalPadding * 2) / 2 + horizontalPadding, footerHeight, { align: "center" });
+
+        // Save the PDF
         pdf.save('report.pdf');
     };
+
+    const handleInstituteSelect = (value) => {
+        setSelectedInstitute(value);
+    };
+
+    const handleYearSelect = (value) => {
+        setSelectedYear(value);
+    };
+
+    const handleGrade = (value) => {
+        setSelectedGrade(value);
+    };
+
+
+    const handleDateRangeChange = (dates) => {
+        setSelectedDateRange(dates);
+        console.log('Selected Date Range:', dates);
+    };
+
+    useEffect(() => {
+        const fetchAnalyticsData = async () => {
+            const collectorId = instituteToCollectorId[selectedInstitute] || 1;
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/analytics', {
+                    params: {
+                        collector_id: collectorId,
+                        academic_year: selectedYear,
+                        grade_id: selectedGrade,
+                    }
+                });
+                setData(response.data);
+                setLoading(false);
+            } catch (err) {
+                setError('Error fetching data');
+                setLoading(false);
+            }
+        };
+        if (selectedInstitute) {
+            fetchAnalyticsData();
+        }
+
+    }, [selectedInstitute, selectedGrade, selectedYear]);
+
+    useEffect(() => {
+        if (selectedInstitute) {
+            const selectedData = options.find(
+                (option) => option.institute === selectedInstitute
+            );
+            if (selectedData) {
+                setAnnualYearOptions(selectedData.annualYear);
+                setSelectedGrade('');
+                setSelectedYear('');
+            }
+        }
+    }, [selectedInstitute]);
+
+    useEffect(() => {
+        if (selectedInstitute && selectedYear) {
+            const selectedData = options.find(
+                (option) => option.institute === selectedInstitute
+            );
+
+            if (selectedData) {
+                setGradeOptions(selectedData.grades[selectedYear] || []);
+            }
+        }
+    }, [selectedInstitute, selectedYear]);
 
     return (
         <Box className={classes.container}>
             <Box className={classes.filterBox}>
                 <Box sx={{ display: "flex" }}>
-                <AutoCompleteComponent label={'Select Institute'} options={instituteOptions} onSelect={handleInstituteSelect} />
-                <AutoCompleteComponent label={'Select Annual Year'} options={annualYearOptions} onSelect={handleYearSelect} />
-                <AutoCompleteComponent label={'Select Grade'} options={gradeOptions} onSelect={handleGrade} />
+                    <AutoCompleteComponent
+                        label={'Select Institute'}
+                        options={options.map((option) => option.institute)}
+                        value={selectedInstitute}
+                        onSelect={handleInstituteSelect}
+                    />
+                    <AutoCompleteComponent
+                        label={'Select Annual Year'}
+                        options={annualYearOptions}
+                        value={selectedYear}
+                        onSelect={handleYearSelect}
+                        disabled={!selectedInstitute}
+                    />
+                    <AutoCompleteComponent
+                        label={'Select Grade'}
+                        options={gradeOptions}
+                        value={selectedGrade}
+                        onSelect={handleGrade}
+                        disabled={!selectedYear}
+                    />
                     <RangePicker onChange={handleDateRangeChange} style={{ height: '55px' }} />
                 </Box>
                 <Box >
-                <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
-                    Download Report
-                </Button>
+                    <Button className={classes.downloadButton} variant="contained" color="primary" onClick={downloadReport}>
+                        Download Report
+                    </Button>
                 </Box>
             </Box>
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                    <CircularProgress />
+                </Box>
+            ) : (
             <Box ref={reportRef} sx={{ backgroundColor: '#F9F9F9', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <Box className={classes.reportBox}>
-                    {tabContent.map((item) => (
-                        <Box className={classes.card} key={item.id}>
-                            <Typography className={classes.title}>{item.title}</Typography>
-                            <Typography className={classes.amount} variant='h4'>
-                                ₹{formatToRupee(item.amount)}
-                            </Typography>
+                            {data && (
+                                <>
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Number of Students</Typography>
+                                        <Typography className={classes.amount}>{data.number_of_students}</Typography>
+                                    </Box>
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Total fee collection</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
+                                    </Box>
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Paid amount</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data.total_collected_amount)}</Typography>
+                                    </Box>
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Unpaid amount</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data.unpaid_amount)}</Typography>
+                                    </Box>
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Number of Students</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data.number_of_students)}</Typography>
+                                    </Box>
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Total fee collection</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data?.total_collected_amount + data?.unpaid_amount)}</Typography>
+                                    </Box>
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Paid amount</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data.total_collected_amount)}</Typography>
+                                    </Box>
+                                    <Box className={classes.card}>
+                                        <Typography className={classes.title}>Unpaid amount</Typography>
+                                        <Typography className={classes.amount}>₹{formatToRupee(data.unpaid_amount)}</Typography>
                         </Box>
-                    ))}
+                                </>
+                            )}
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", backgroundColor: '#F9F9F9', marginTop: "6%" }}>
-                    <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
+                    <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                             Heading for First Graph
                         </Typography>
-                        <BasicBarChart width={500} height={300} />
+                                <BasicBarChart width={500} height={300} data={data?.monthly_data} />
                     </Box>
-                    <Box sx={{ textAlign: 'center' }}> {/* Center-align heading and chart */}
+                    <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                             Heading for Second Graph
                         </Typography>
-                        <BasicBarChart width={500} height={300} />
+                                <BasicBarChart width={500} height={300} data={data?.monthly_data} />
                     </Box>
-                </Box>
-
+                        </Box>
             </Box>
+            )}
         </Box>
     );
 };
 
-export default Summary;
+export default Analytics;
