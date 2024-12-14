@@ -84,7 +84,6 @@ const Analytics = () => {
     const [gradeOptions, setGradeOptions] = useState([]);
     const [annualYearOptions, setAnnualYearOptions] = useState([]);
     const [selectedDateRange, setSelectedDateRange] = useState()
-    console.log("🚀 ~ Analytics ~ selectedDateRange:", selectedDateRange)
 
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
@@ -168,22 +167,39 @@ const Analytics = () => {
     };
 
     const handleDateRangeChange = (dates) => {
-        setSelectedDateRange(dates);
-        console.log('Selected Date Range:', dates);
+        const formatDate = (dateObj) => {
+            const date = dateObj.$d;  // Accessing the native JavaScript Date object
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');  // Add leading zero if month is single digit
+            const day = date.getDate().toString().padStart(2, '0');  // Add leading zero if day is single digit
+            return `${year}-${month}-${day}`;
+        };
+    
+        let formattedRange = [];
+    
+        if (dates) {
+            formattedRange = dates.map(formatDate);
+            setSelectedDateRange(formattedRange);  // Assuming setSelectedDateRange is used to update state
+        }
     };
 
     useEffect(() => {
         const fetchAnalyticsData = async () => {
             const collectorId = instituteToCollectorId[selectedInstitute] || 1;
             try {
+                const params =  {
+                    collector_id: collectorId,
+                    academic_year: selectedYear,
+                    grade_id: selectedGrade
+                }
+                if (selectedDateRange) {
+                    params.range_start_date = selectedDateRange[0];
+                    params.range_end_date = selectedDateRange[1];
+                }
                 const response = await axios.get('http://127.0.0.1:8000/analytics', {
-                    params: {
-                        collector_id: collectorId,
-                        academic_year: selectedYear,
-                        grade_id: selectedGrade,
-                        date_range: selectedDateRange
-                    }
+                    params:params
                 });
+                
                 setData(response.data);
                 setLoading(false);
             } catch (err) {
@@ -196,9 +212,6 @@ const Analytics = () => {
         }
 
     }, [selectedInstitute, selectedGrade, selectedYear, selectedDateRange]);
-
-    
-    
 
     useEffect(() => {
         if (selectedInstitute) {
@@ -257,6 +270,10 @@ const Analytics = () => {
                     </Button>
                 </Box>
             </Box>
+            {
+                            console.log("🚀 ~ Analytics ~ data:", data)
+
+                                }
             {loading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                     <CircularProgress />
@@ -266,6 +283,7 @@ const Analytics = () => {
                 <Box className={classes.reportBox}>
                             {data && (
                                 <>
+                                
                                     <Box className={classes.card}>
                                         <Typography className={classes.title}>Total Payment Done</Typography>
                                         <Typography className={classes.amount}>₹{formatToRupee(data.number_of_students)}</Typography>
@@ -275,15 +293,15 @@ const Analytics = () => {
 
                                         <Box display="flex" alignItems="center" mt={1}>
                                             <Box sx={{ justifyContent: "space-between", display: "flex" }}>
-                                                <Typography variant="caption">Flex: 120</Typography> {/* Example number */}
+                                                <Typography variant="caption">Flex: 120</Typography> 
                                             </Box>
                                         </Box>
                                         <Box display="flex" alignItems="center" mt={1}>
-                                            <Typography variant="caption">Cred: 75</Typography> {/* Example number */}
+                                            <Typography variant="caption">Cred: 75</Typography> 
                                         </Box>
 
                                         <Box display="flex" alignItems="center" mt={1}>
-                                            <Typography variant="caption">Pay: 42</Typography> {/* Example number */}
+                                            <Typography variant="caption">Pay: 42</Typography> 
                                         </Box>
                                     </Box>
 
@@ -304,15 +322,16 @@ const Analytics = () => {
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                                     Products Split
                         </Typography>
-                                {/* Bargraph need to add */}
+                        {(data?.monthly_data) && (
                                 <BasicBarChart width={500} height={300} data={data?.monthly_data} />
+                        )},
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
                         <Typography variant="h6" sx={{ marginBottom: '8px' }}>
                                     {/* vertical Bargraph need to add */}
                                     Settlement Track
                         </Typography>
-                                <BasicBarChart width={500} height={300} data={data?.monthly_data} />
+                                {/* <BasicBarChart width={500} height={300} data={data?.monthly_data} /> */}
                     </Box>
                         </Box>
             </Box>
